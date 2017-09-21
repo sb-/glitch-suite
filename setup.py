@@ -12,4 +12,5 @@ setup(
   download_url = 'https://github.com/cqsd/glitch-suite/archive/0.1.tar.gz',
   keywords = ['glitch'], # arbitrary keywords
   classifiers = [],
+  scripts=['rgbshift/rgbshift']
 )
