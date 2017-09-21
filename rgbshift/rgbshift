@@ -97,42 +97,43 @@ if __name__ == '__main__':
             action='store_true')
     parser.add_argument('-o', '--output', help='Path to output. Same as -r when multiple files specified.',
             metavar='PATH')
-    parser.add_argument('-n', help='Number of trials.',
-            type=int, dest='n_trials')
     parser.add_argument('--no-display', help='Do not show image on completion.',
             action='store_true', default=False, dest='hide_result')
-    
+
     args = parser.parse_args()
 
     should_write_out = args.output or args.random_suffix or args.suffix
     if not should_write_out and args.hide_result:
         sys.exit('Oops, you chose to not show or save the result.\nTry -h for help.')
 
-    def do_glitch(fname):
-        im = Image.open(fname)
-        glitched = glitch(im)
-        if should_write_out:
-            _fname = fname[:-4] if len(fname) > 4 and fname[-4:].lower() == '.png' else fname
-            if (len(args.filepaths) > 1):
-                output_fname = args.output \
-                    or (_fname + (args.suffix \
-                    or ''.join([random.choice(string.hexdigits) for _ in range(8)])))
-            else:
-                 output_fname = (_fname + \
-                        (args.suffix \
-                        or ''.join([random.choice(string.hexdigits) for _ in range(8)])))
-            print('Saving glitched {} as {}.png...'.format(fname, output_fname))
-            glitched.save('{}.png'.format(output_fname), 'png')
-            print('Done.')
-        if not args.hide_result:
-                glitched.show()
-
     try:
         if len(args.filepaths) == 1:
             fname = args.filepaths[0]
-            do_glitch(fname)
+            im = Image.open(fname)
+            glitched = glitch(im)
+            if should_write_out:
+                _fname = fname[:-4] if len(fname) > 4 and fname[-4:].lower() == '.png' else fname
+                output_fname = args.output \
+                        or (_fname + (args.suffix \
+                        or ''.join([random.choice(string.hexdigits) for _ in range(8)])))
+                print('Saving glitched {} as {}.png...'.format(fname, output_fname))
+                glitched.save('{}.png'.format(output_fname), 'png')
+                print('Done.')
+            if not args.hide_result:
+                glitched.show()
         else:
             for fname in args.filepaths:
-                do_glitch(fname)
+                im = Image.open(fname)
+                glitched = glitch(im)
+                if should_write_out:
+                    _fname = fname[:-4] if len(fname) > 4 and fname[-4:].lower() == '.png' else fname
+                    output_fname = (_fname + \
+                        (args.suffix \
+                        or ''.join([random.choice(string.hexdigits) for _ in range(8)])))
+                    print('Saving glitched {} as {}.png...'.format(fname, output_fname))
+                    glitched.save('{}.png'.format(output_fname), 'png')
+                    print('Done.')
+                if not args.hide_result:
+                    glitched.show()
     except Exception as e:
         print('Oops {}'.format(e))
